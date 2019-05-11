@@ -1,42 +1,30 @@
 'use strict';
 
-const future = value => {
-  let mapper = null;
-  return {
-    map(fn) {
-      mapper = fn;
-      return future(this);
-    },
-    fork(successed, failed) {
-      const finish = res => {
-        if (res instanceof Error) {
-          if (failed) failed(res);
-          return;
-        }
-        const result = mapper ? mapper(res) : res;
-        if (result instanceof Error) {
-          if (failed) failed(result);
-          return;
-        }
-        successed(result);
-      };
-      if (value.fork) {
-        value.fork(finish, failed);
-        return;
-      }
-      finish(value, failed);
-    }
-  };
-};
+const future = executor => ({
+  chain(fn) {
+    return future((resolve, reject) => this.fork(
+      value => fn(value).fork(resolve),
+      error => reject(error),
+    ));
+  },
+  map(fn) {
+    return this.chain(value => future.of(fn(value)));
+  },
+  fork(successed, failed) {
+    executor(successed, failed);
+    return this;
+  }
+});
+
+future.of = value => future(resolve => resolve(value));
 
 // Usage
 
-future(5)
+future((resolve, reject) => reject(new Error('Rejected')))
   .map(x => {
     console.log('future1 started');
     return x;
   })
-  //.map(x => x % 2 === 0 ? x : new Error('odd value'))
   .map(x => ++x)
   .map(x => x ** 3)
   .fork(

@@ -35,6 +35,7 @@ class Future {
 }
 
 // Usage
+
 (async () => {
   const value = await Future.of(6)
     .map(x => {

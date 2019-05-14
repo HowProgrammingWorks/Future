@@ -39,6 +39,6 @@ const futurify = fn => (...args) => new Future((resolve, reject) => {
 const readFile = (name, callback) => fs.readFile(name, 'utf8', callback);
 const futureFile = futurify(readFile);
 
-futureFile('7-usage.js')
+futureFile('8-futurify.js')
   .map(x => x.length)
   .fork(x => console.log('File size:', x));

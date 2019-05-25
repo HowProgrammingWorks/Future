@@ -7,6 +7,7 @@ const future = value => {
       mapper = fn;
       return future(this);
     },
+
     fork(successed) {
       const finish = result => {
         if (mapper) successed(mapper(result));

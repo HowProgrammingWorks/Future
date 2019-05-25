@@ -7,9 +7,11 @@ const future = executor => ({
       error => reject(error),
     ));
   },
+
   map(fn) {
     return this.chain(value => future.of(fn(value)));
   },
+
   fork(successed, failed) {
     executor(successed, failed);
     return this;

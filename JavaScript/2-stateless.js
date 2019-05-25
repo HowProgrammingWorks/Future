@@ -6,9 +6,11 @@ const future = executor => ({
       value => fn(value).fork(resolve)
     ));
   },
+
   map(fn) {
     return this.chain(value => future.of(fn(value)));
   },
+
   fork(successed) {
     executor(successed);
     return this;

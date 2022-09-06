@@ -8,18 +8,18 @@ class Future {
   }
 
   static of(value) {
-    return new Future(resolve => resolve(value));
+    return new Future((resolve) => resolve(value));
   }
 
   chain(fn) {
     return new Future((resolve, reject) => this.fork(
-      value => fn(value).fork(resolve, reject),
-      error => reject(error),
+      (value) => fn(value).fork(resolve, reject),
+      (error) => reject(error),
     ));
   }
 
   map(fn) {
-    return this.chain(value => Future.of(fn(value)));
+    return this.chain((value) => Future.of(fn(value)));
   }
 
   fork(successed, failed) {
@@ -27,7 +27,7 @@ class Future {
   }
 }
 
-const futurify = fn => (...args) => new Future((resolve, reject) => {
+const futurify = (fn) => (...args) => new Future((resolve, reject) => {
   fn(...args, (err, data) => {
     if (err) reject(err);
     else resolve(data);
@@ -40,5 +40,5 @@ const readFile = (name, callback) => fs.readFile(name, 'utf8', callback);
 const futureFile = futurify(readFile);
 
 futureFile('8-futurify.js')
-  .map(x => x.length)
-  .fork(x => console.log('File size:', x));
+  .map((x) => x.length)
+  .fork((x) => console.log('File size:', x));

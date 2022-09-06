@@ -10,23 +10,23 @@ class Future {
   }
 
   static of(value) {
-    return new Future(resolve => resolve(value));
+    return new Future((resolve) => resolve(value));
   }
 
   chain(fn) {
     console.log(`chain ${this.id}`);
     return new Future((resolve, reject) => this.fork(
-      value => {
+      (value) => {
         console.log(`resolve ${this.id}`);
         fn(value).fork(resolve, reject);
       },
-      error => reject(error),
+      (error) => reject(error),
     ));
   }
 
   map(fn) {
     console.log(`map ${this.id}`);
-    return this.chain(value => {
+    return this.chain((value) => {
       console.log(`map.chain ${this.id}`);
       return Future.of(fn(value));
     });
@@ -41,7 +41,7 @@ class Future {
 // Usage
 
 Future.of(5)
-  .map(x => ++x)
-  .map(x => x ** 3)
-  .map(x => x * 2)
-  .fork(value => console.log(`Result ${value}`));
+  .map((x) => ++x)
+  .map((x) => x ** 3)
+  .map((x) => x * 2)
+  .fork((value) => console.log(`Result ${value}`));

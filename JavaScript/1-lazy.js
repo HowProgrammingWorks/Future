@@ -13,7 +13,7 @@ const future = (value) => {
         if (mapper) successed(mapper(result));
         else if (successed) successed(result);
       };
-      if (value.fork) return value.fork(finish);
+      if (value.fork) return void value.fork(finish);
       finish(value);
     }
   };

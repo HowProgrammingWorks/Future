@@ -12,10 +12,12 @@ class Future {
   }
 
   chain(fn) {
-    return new Future((resolve, reject) => this.fork(
-      (value) => fn(value).fork(resolve, reject),
-      (error) => reject(error),
-    ));
+    return new Future((resolve, reject) =>
+      this.fork(
+        (value) => fn(value).fork(resolve, reject),
+        (error) => reject(error),
+      ),
+    );
   }
 
   map(fn) {
@@ -29,15 +31,14 @@ class Future {
 
 // Usage
 
-const futureFile = (name) => new Future((resolve, reject) => {
-  fs.readFile(name, 'utf8', (err, data) => {
-    if (err) {
-      reject(err);
-      return;
-    }
-    resolve(data);
+const futureFile = (name) =>
+  new Future((resolve, reject) => {
+    fs.readFile(name, 'utf8', (err, data) => {
+      console.log('read');
+      if (err) reject(err);
+      else resolve(data);
+    });
   });
-});
 
 const future = futureFile('7-usage.js');
 const size = future.map((x) => x.length);

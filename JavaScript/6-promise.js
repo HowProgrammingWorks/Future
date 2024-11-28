@@ -10,10 +10,12 @@ class Future {
   }
 
   chain(fn) {
-    return new Future((resolve, reject) => this.fork(
-      (value) => fn(value).fork(resolve, reject),
-      (error) => reject(error),
-    ));
+    return new Future((resolve, reject) =>
+      this.fork(
+        (value) => fn(value).fork(resolve, reject),
+        (error) => reject(error),
+      ),
+    );
   }
 
   map(fn) {
@@ -36,7 +38,7 @@ class Future {
 
 // Usage
 
-(async () => {
+const main = async () => {
   const value = await Future.of(6)
     .map((x) => {
       console.log('future1 started');
@@ -47,4 +49,6 @@ class Future {
     .promise();
 
   console.log('result', value);
-})();
+};
+
+main();

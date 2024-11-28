@@ -12,10 +12,12 @@ class Future {
   }
 
   chain(fn) {
-    return new Future((resolve, reject) => this.fork(
-      (value) => fn(value).fork(resolve, reject),
-      (error) => reject(error),
-    ));
+    return new Future((resolve, reject) =>
+      this.fork(
+        (value) => fn(value).fork(resolve, reject),
+        (error) => reject(error),
+      ),
+    );
   }
 
   map(fn) {
@@ -27,12 +29,15 @@ class Future {
   }
 }
 
-const futurify = (fn) => (...args) => new Future((resolve, reject) => {
-  fn(...args, (err, data) => {
-    if (err) reject(err);
-    else resolve(data);
-  });
-});
+const futurify =
+  (fn) =>
+  (...args) =>
+    new Future((resolve, reject) => {
+      fn(...args, (err, data) => {
+        if (err) reject(err);
+        else resolve(data);
+      });
+    });
 
 // Usage
 

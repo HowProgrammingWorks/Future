@@ -1,8 +1,10 @@
 'use strict';
 
 class Future {
+  #executor;
+
   constructor(executor) {
-    this.executor = executor;
+    this.#executor = executor;
   }
 
   static of(value) {
@@ -10,10 +12,12 @@ class Future {
   }
 
   chain(fn) {
-    return new Future((resolve, reject) => this.fork(
-      (value) => fn(value).fork(resolve, reject),
-      (error) => reject(error),
-    ));
+    return new Future((resolve, reject) =>
+      this.fork(
+        (value) => fn(value).fork(resolve, reject),
+        (error) => reject(error),
+      ),
+    );
   }
 
   map(fn) {
@@ -21,7 +25,7 @@ class Future {
   }
 
   fork(successed, failed) {
-    this.executor(successed, failed);
+    this.#executor(successed, failed);
   }
 }
 
@@ -40,5 +44,5 @@ Future.of(6)
     },
     (error) => {
       console.log('future failed', error.message);
-    }
+    },
   );

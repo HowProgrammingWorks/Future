@@ -10,10 +10,12 @@ class Future {
   }
 
   chain(fn) {
-    return new Future((resolve, reject) => this.fork(
-      (value) => fn(value).fork(resolve, reject),
-      (error) => reject(error),
-    ));
+    return new Future((resolve, reject) =>
+      this.fork(
+        (value) => fn(value).fork(resolve, reject),
+        (error) => reject(error),
+      ),
+    );
   }
 
   map(fn) {
@@ -31,6 +33,16 @@ const f1 = Future.of(6);
 const f2 = f1.map((x) => ++x);
 const f3 = f2.map((x) => x ** 3);
 const f4 = f1.map((x) => x * 2);
+
+/*
+      F(6)
+      |
+      f1---\
+      |    |
+      f2   f4
+      |
+      f3
+*/
 
 f1.fork((x) => console.log('f1 fork1', x));
 f1.fork((x) => console.log('f1 fork2', x));

@@ -2,9 +2,7 @@
 
 const future = (executor) => ({
   chain(fn) {
-    return future((resolve) => this.fork(
-      (value) => fn(value).fork(resolve)
-    ));
+    return future((resolve) => this.fork((value) => fn(value).fork(resolve)));
   },
 
   map(fn) {
@@ -14,7 +12,7 @@ const future = (executor) => ({
   fork(successed) {
     executor(successed);
     return this;
-  }
+  },
 });
 
 future.of = (value) => future((resolve) => resolve(value));

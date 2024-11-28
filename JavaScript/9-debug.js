@@ -15,13 +15,15 @@ class Future {
 
   chain(fn) {
     console.log(`chain ${this.id}`);
-    return new Future((resolve, reject) => this.fork(
-      (value) => {
-        console.log(`resolve ${this.id}`);
-        fn(value).fork(resolve, reject);
-      },
-      (error) => reject(error),
-    ));
+    return new Future((resolve, reject) =>
+      this.fork(
+        (value) => {
+          console.log(`resolve ${this.id}`);
+          fn(value).fork(resolve, reject);
+        },
+        (error) => reject(error),
+      ),
+    );
   }
 
   map(fn) {

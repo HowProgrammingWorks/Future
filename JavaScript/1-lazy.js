@@ -1,22 +1,28 @@
 'use strict';
 
+const id = (x) => x;
+
 const future = (value) => {
   let mapper = null;
-  return {
-    map(fn) {
-      mapper = fn;
-      return future(this);
-    },
 
-    fork(successed) {
-      const finish = (result) => {
-        if (mapper) successed(mapper(result));
-        else if (successed) successed(result);
-      };
-      if (value.fork) return void value.fork(finish);
-      finish(value);
-    }
+  const instance = {};
+
+  const map = (fn) => {
+    mapper = fn;
+    return future(instance);
   };
+
+  const fork = (successed) => {
+    const finish = (product) => {
+      const transform = mapper ?? id;
+      const result = transform(product);
+      if (successed) successed(result);
+    };
+    if (value.fork) return void value.fork(finish);
+    finish(value);
+  };
+
+  return Object.assign(instance, { map, fork });
 };
 
 // Usage

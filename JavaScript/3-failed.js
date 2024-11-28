@@ -2,10 +2,12 @@
 
 const future = (executor) => ({
   chain(fn) {
-    return future((resolve, reject) => this.fork(
-      (value) => fn(value).fork(resolve),
-      (error) => reject(error),
-    ));
+    return future((resolve, reject) =>
+      this.fork(
+        (value) => fn(value).fork(resolve),
+        (error) => reject(error),
+      ),
+    );
   },
 
   map(fn) {
@@ -15,7 +17,7 @@ const future = (executor) => ({
   fork(successed, failed) {
     executor(successed, failed);
     return this;
-  }
+  },
 });
 
 future.of = (value) => future((resolve) => resolve(value));
@@ -35,5 +37,5 @@ future((resolve, reject) => reject(new Error('Rejected')))
     },
     (error) => {
       console.log('future failed', error.message);
-    }
+    },
   );

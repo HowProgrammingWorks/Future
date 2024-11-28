@@ -13,8 +13,8 @@ class Future {
     return new Future((resolve, reject) =>
       this.fork(
         (value) => fn(value).fork(resolve, reject),
-        (error) => reject(error)
-      )
+        (error) => reject(error),
+      ),
     );
   }
 
@@ -29,8 +29,8 @@ class Future {
               reject(error);
             }
           }).fork(resolve, reject),
-        (error) => reject(error)
-      )
+        (error) => reject(error),
+      ),
     );
   }
 
@@ -40,9 +40,22 @@ class Future {
 
   promise() {
     return new Promise((resolve, reject) => {
-      this.fork((value) => resolve(value), (error) => reject(error));
+      this.fork(
+        (value) => resolve(value),
+        (error) => reject(error),
+      );
     });
   }
 }
 
-module.exports = { Future };
+const futurify =
+  (fn) =>
+  (...args) =>
+    new Future((resolve, reject) => {
+      fn(...args, (err, data) => {
+        if (err) reject(err);
+        else resolve(data);
+      });
+    });
+
+module.exports = { Future, futurify };

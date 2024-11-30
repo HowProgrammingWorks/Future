@@ -1,8 +1,10 @@
 'use strict';
 
 class Future {
+  #executor;
+
   constructor(executor) {
-    this.executor = executor;
+    this.#executor = executor;
   }
 
   static of(value) {
@@ -35,16 +37,20 @@ class Future {
   }
 
   fork(successed, failed) {
-    this.executor(successed, failed);
+    this.#executor(successed, failed);
   }
 
-  promise() {
-    return new Promise((resolve, reject) => {
-      this.fork(
-        (value) => resolve(value),
-        (error) => reject(error),
-      );
-    });
+  toPromise() {
+    const { promise, resolve, reject } = Promise.withResolvers();
+    this.fork(resolve, reject);
+    return promise;
+  }
+
+  toThenable() {
+    const then = (resolve, reject) => {
+      this.fork(resolve, reject);
+    };
+    return { then };
   }
 }
 

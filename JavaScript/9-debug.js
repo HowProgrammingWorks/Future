@@ -3,10 +3,12 @@
 let i = 0;
 
 class Future {
+  #executor;
+
   constructor(executor) {
     this.id = i++;
     console.log(`new Future ${this.id}`);
-    this.executor = executor;
+    this.#executor = executor;
   }
 
   static of(value) {
@@ -36,7 +38,7 @@ class Future {
 
   fork(successed, failed) {
     console.log(`fork ${this.id}`);
-    this.executor(successed, failed);
+    this.#executor(successed, failed);
   }
 }
 

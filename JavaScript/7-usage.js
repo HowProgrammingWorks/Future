@@ -3,8 +3,10 @@
 const fs = require('node:fs');
 
 class Future {
+  #executor;
+
   constructor(executor) {
-    this.executor = executor;
+    this.#executor = executor;
   }
 
   static of(value) {
@@ -25,7 +27,7 @@ class Future {
   }
 
   fork(successed, failed) {
-    this.executor(successed, failed);
+    this.#executor(successed, failed);
   }
 }
 
